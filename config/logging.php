@@ -82,18 +82,24 @@ return [
             'replace_placeholders' => true,
         ],
 
-        'papertrail' => [
-            'driver' => 'monolog',
-            'level' => env('LOG_LEVEL', 'debug'),
-            'handler' => env('LOG_PAPERTRAIL_HANDLER', SyslogUdpHandler::class),
-            'handler_with' => [
-                'host' => env('PAPERTRAIL_URL'),
-                'port' => env('PAPERTRAIL_PORT'),
+     'papertrail' => [
+    'driver' => 'monolog',
+    'level' => env('LOG_LEVEL', 'debug'),
+    'handler' => env('LOG_PAPERTRAIL_HANDLER', \Monolog\Handler\SyslogUdpHandler::class),
+    'handler_with' => [
+        'host' => env('PAPERTRAIL_URL', 'null'),
+        'port' => env('PAPERTRAIL_PORT', 0),
 
-                'connectionString' => 'tls://'.env('PAPERTRAIL_URL').':'.env('PAPERTRAIL_PORT'),
-            ],
-            'processors' => [PsrLogMessageProcessor::class],
-        ],
+        // Only build connection string if both values are set
+        'connectionString' => env('PAPERTRAIL_URL') && env('PAPERTRAIL_PORT')
+            ? 'tls://' . env('PAPERTRAIL_URL') . ':' . env('PAPERTRAIL_PORT')
+            : null,
+    ],
+    'processors' => [
+        \Monolog\Processor\PsrLogMessageProcessor::class,
+    ],
+],
+
 
         'stderr' => [
             'driver' => 'monolog',
