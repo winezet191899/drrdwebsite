@@ -5,6 +5,12 @@ use Monolog\Handler\StreamHandler;
 use Monolog\Handler\SyslogUdpHandler;
 use Monolog\Processor\PsrLogMessageProcessor;
 
+$papertrailUrl = env('PAPERTRAIL_URL');
+$papertrailPort = env('PAPERTRAIL_PORT');
+$connectionString = ($papertrailUrl && $papertrailPort)
+    ? "tls://{$papertrailUrl}:{$papertrailPort}"
+    : null;
+
 return [
 
     /*
